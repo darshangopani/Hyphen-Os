@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Mono", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Michroma", ui-sans-serif, system-ui, sans-serif;
+  --color-neon-blue: #00f3ff;
+  --color-neon-purple: #bc13fe;
+  --color-deep-space: #030014;
+  --color-terminal-green: #00ff41;
+  --animate-spin-slow: spin 8s linear infinite;
+}
+
+body {
+  background-color: var(--color-deep-space);
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
