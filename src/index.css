@@ -9,10 +9,28 @@
   --color-deep-space: #030014;
   --color-terminal-green: #00ff41;
   --animate-spin-slow: spin 8s linear infinite;
+  --animate-scan: scan 4s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.5s infinite;
+}
+
+@keyframes scan {
+  0%, 100% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
 
 body {
   background-color: var(--color-deep-space);
   color: #e2e8f0;
   overflow-x: hidden;
+  cursor: none;
+}
+
+a, button, [role="button"], input, select, textarea {
+  cursor: none !important;
 }

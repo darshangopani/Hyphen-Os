@@ -4,12 +4,14 @@ import { Environment, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom, ChromaticAberration, Vignette, Noise, SMAA } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
-import { PlanetOutpost3D } from './components/PlanetOutpost3D';
-import { Hero } from './components/Hero';
-import { Features } from './components/Features';
-import { Pricing } from './components/Pricing';
-import { Footer } from './components/Footer';
-import { AdsterraBox } from './components/AdsterraBox';
+import { Routes, Route } from 'react-router-dom';
+import { CyberNetwork3D } from './components/CyberNetwork3D';
+import { TechOverlay } from './components/TechOverlay';
+import { CustomCursor } from './components/CustomCursor';
+import { HUDOverlay } from './components/HUDOverlay';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { SignUp } from './pages/SignUp';
 
 export default function App() {
   const { scrollYProgress } = useScroll();
@@ -17,7 +19,11 @@ export default function App() {
   const smoothScroll = useSpring(scrollYProgress, { damping: 20, stiffness: 100, mass: 0.2 });
 
   return (
-    <div className="relative bg-deep-space text-slate-200 selection:bg-neon-blue/30 selection:text-neon-blue overflow-x-hidden">
+    <div className="relative bg-deep-space text-slate-200 selection:bg-neon-blue/30 selection:text-neon-blue overflow-x-hidden cursor-none">
+      <CustomCursor />
+      <TechOverlay />
+      <HUDOverlay />
+      
       {/* Fixed 3D Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Canvas 
@@ -35,7 +41,7 @@ export default function App() {
           
           <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 
-          <PlanetOutpost3D scrollYProgress={smoothScroll} />
+          <CyberNetwork3D scrollYProgress={smoothScroll} />
           
           <Environment preset="city" />
           
@@ -49,27 +55,11 @@ export default function App() {
         </Canvas>
       </div>
 
-      <main className="relative z-10 w-full">
-        <Hero />
-        
-        {/* Ad Placement 1 */}
-        <div className="container mx-auto px-4 py-16 flex justify-center">
-          <AdsterraBox id="ad-top" width={728} height={90} />
-        </div>
-
-        <Features />
-        
-        {/* Ad Placement 2 */}
-        <div className="container mx-auto px-4 py-16 flex justify-center">
-          <AdsterraBox id="ad-mid" width={300} height={250} />
-        </div>
-
-        <Pricing />
-        
-        <div className="min-h-[50vh] flex flex-col justify-end">
-          <Footer />
-        </div>
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
     </div>
   );
 }
