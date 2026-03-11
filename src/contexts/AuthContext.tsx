@@ -6,7 +6,8 @@ import {
   GithubAuthProvider, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  signOut 
+  signOut,
+  updateProfile
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -51,8 +52,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               role: 'user'
             });
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error creating user profile:", error);
+          const errInfo = {
+            error: error instanceof Error ? error.message : String(error),
+            operationType: 'create',
+            path: `users/${currentUser.uid}`,
+            authInfo: {
+              userId: currentUser.uid,
+              email: currentUser.email,
+              emailVerified: currentUser.emailVerified,
+              isAnonymous: currentUser.isAnonymous,
+            }
+          };
+          console.error('Firestore Error: ', JSON.stringify(errInfo));
         }
       }
       
@@ -69,8 +82,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-    // Profile creation is handled in onAuthStateChanged
-    // But we can update the profile name here if needed
+    if (userCredential.user) {
+      await updateProfile(userCredential.user, { displayName: name });
+      // Update local state to reflect the new display name immediately
+      setUser({ ...userCredential.user, displayName: name } as User);
+      
+      // Also update the Firestore document if it was already created by onAuthStateChanged
+      const userRef = doc(db, 'users', userCredential.user.uid);
+      try {
+        await setDoc(userRef, { displayName: name }, { merge: true });
+      } catch (e) {
+        console.error("Error updating displayName in Firestore:", e);
+      }
+    }
   };
 
   const signInWithEmail = async (email: string, pass: string) => {

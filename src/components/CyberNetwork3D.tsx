@@ -48,7 +48,7 @@ function CyberGrid() {
 }
 
 function DataStreams() {
-  const count = 300;
+  const count = 150; // Reduced from 300
   const meshRef = useRef<THREE.InstancedMesh>(null);
   
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -125,18 +125,17 @@ function AdvancedCore({ scrollYProgress }: { scrollYProgress: MotionValue<number
       <Float speed={2} floatIntensity={2} rotationIntensity={1}>
         <group ref={coreRef}>
           {/* Inner Energy Sphere */}
-          <Sphere args={[2, 32, 32]}>
+          <Sphere args={[2, 16, 16]}>
             <meshStandardMaterial color="#000000" emissive="#00f3ff" emissiveIntensity={2} wireframe />
           </Sphere>
           
           {/* Core Shell */}
-          <Icosahedron args={[2.5, 2]}>
+          <Icosahedron args={[2.5, 1]}>
             <meshPhysicalMaterial 
               color="#0a0a0a" 
-              metalness={1} 
-              roughness={0.1} 
-              transmission={0.9} 
-              ior={1.5} 
+              metalness={0.8} 
+              roughness={0.2} 
+              transmission={0.5} 
               transparent 
               opacity={0.8}
               wireframe
@@ -145,13 +144,13 @@ function AdvancedCore({ scrollYProgress }: { scrollYProgress: MotionValue<number
           
           {/* Data Rings */}
           <group ref={ringsRef}>
-            <Torus args={[3.5, 0.02, 16, 100]}>
+            <Torus args={[3.5, 0.02, 8, 64]}>
               <meshStandardMaterial color="#ff007f" emissive="#ff007f" emissiveIntensity={2} />
             </Torus>
-            <Torus args={[4.5, 0.02, 16, 100]} rotation={[Math.PI / 2, 0, 0]}>
+            <Torus args={[4.5, 0.02, 8, 64]} rotation={[Math.PI / 2, 0, 0]}>
               <meshStandardMaterial color="#00f3ff" emissive="#00f3ff" emissiveIntensity={2} />
             </Torus>
-            <Torus args={[5.5, 0.02, 16, 100]} rotation={[0, Math.PI / 2, 0]}>
+            <Torus args={[5.5, 0.02, 8, 64]} rotation={[0, Math.PI / 2, 0]}>
               <meshStandardMaterial color="#bc13fe" emissive="#bc13fe" emissiveIntensity={2} />
             </Torus>
           </group>
@@ -166,10 +165,10 @@ function AdvancedCore({ scrollYProgress }: { scrollYProgress: MotionValue<number
 
         {/* Floating Data Nodes around the core */}
         <group ref={trailsRef}>
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 3 }).map((_, i) => (
             <group key={i} rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}>
-              <Trail width={1} color={i % 2 === 0 ? "#00f3ff" : "#ff007f"} length={8} decay={1} attenuation={(t) => t * t}>
-                <Sphere args={[0.1]} position={[7, 0, 0]}>
+              <Trail width={1} color={i % 2 === 0 ? "#00f3ff" : "#ff007f"} length={4} decay={1} attenuation={(t) => t * t}>
+                <Sphere args={[0.1, 8, 8]} position={[7, 0, 0]}>
                   <meshBasicMaterial color="#ffffff" />
                 </Sphere>
               </Trail>

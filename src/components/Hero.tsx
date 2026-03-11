@@ -32,7 +32,7 @@ export function Hero() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neon-blue/30 bg-neon-blue/10 backdrop-blur-sm text-neon-blue font-mono text-sm mb-8"
         >
           <Terminal size={16} />
-          <span>SYS.BOOT // HYPHEN_OS_ONLINE {user ? `// USER: ${user.email}` : ''}</span>
+          <span>SYS.BOOT // HYPHEN_OS_ONLINE {user ? `// USER: ${user.email || user.displayName || 'ANONYMOUS'}` : ''}</span>
         </motion.div>
 
         <motion.h1

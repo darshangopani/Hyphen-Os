@@ -28,9 +28,4 @@ body {
   background-color: var(--color-deep-space);
   color: #e2e8f0;
   overflow-x: hidden;
-  cursor: none;
-}
-
-a, button, [role="button"], input, select, textarea {
-  cursor: none !important;
 }

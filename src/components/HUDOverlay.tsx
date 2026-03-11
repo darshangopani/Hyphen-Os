@@ -16,16 +16,8 @@ export function HUDOverlay() {
   return (
     <div className="fixed inset-0 pointer-events-none z-40 p-6 flex flex-col justify-between font-mono text-[10px] text-neon-blue/50 tracking-widest uppercase mix-blend-screen">
       <div className="flex justify-between items-start">
-        <div className="flex flex-col gap-1">
-          <div className="text-neon-blue font-bold tracking-[0.2em] flex items-center gap-2">
-            <div className="w-2 h-2 bg-neon-blue animate-pulse rounded-full" />
-            HYPHEN_OS // V.2.4.1
-          </div>
-          <div className="pl-4 border-l border-neon-blue/30 text-slate-400">SYS.CORE.ONLINE</div>
-        </div>
-        <div className="text-right flex flex-col gap-1">
-          <div className="text-white/80">{time}</div>
-          <div className="text-terminal-green">LATENCY: 12ms</div>
+        <div className="flex flex-col gap-1 opacity-0 hidden md:flex">
+          {/* Empty spacer to keep the right side aligned if needed, or just remove and use justify-end */}
         </div>
       </div>
       

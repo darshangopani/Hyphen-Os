@@ -7,8 +7,9 @@ import * as THREE from 'three';
 import { Routes, Route } from 'react-router-dom';
 import { CyberNetwork3D } from './components/CyberNetwork3D';
 import { TechOverlay } from './components/TechOverlay';
-import { CustomCursor } from './components/CustomCursor';
 import { HUDOverlay } from './components/HUDOverlay';
+import { Logo } from './components/Logo';
+import { TopNav } from './components/TopNav';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { SignUp } from './pages/SignUp';
@@ -19,8 +20,9 @@ export default function App() {
   const smoothScroll = useSpring(scrollYProgress, { damping: 20, stiffness: 100, mass: 0.2 });
 
   return (
-    <div className="relative bg-deep-space text-slate-200 selection:bg-neon-blue/30 selection:text-neon-blue overflow-x-hidden cursor-none">
-      <CustomCursor />
+    <div className="relative bg-deep-space text-slate-200 selection:bg-neon-blue/30 selection:text-neon-blue overflow-x-hidden">
+      <Logo />
+      <TopNav />
       <TechOverlay />
       <HUDOverlay />
       
@@ -39,16 +41,16 @@ export default function App() {
           <directionalLight position={[-10, -20, -10]} intensity={1.5} color="#00f3ff" />
           <pointLight position={[0, 0, 5]} intensity={1} color="#ffffff" />
           
-          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+          <Stars radius={100} depth={50} count={1500} factor={4} saturation={0} fade speed={1} />
 
           <CyberNetwork3D scrollYProgress={smoothScroll} />
           
           <Environment preset="city" />
           
           <EffectComposer multisampling={0}>
-            <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} intensity={2} mipmapBlur />
-            <Noise opacity={0.03} blendFunction={BlendFunction.OVERLAY} />
-            <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={new THREE.Vector2(0.0015, 0.0015)} />
+            <Bloom luminanceThreshold={0.4} luminanceSmoothing={0.9} height={300} intensity={1.5} />
+            <Noise opacity={0.02} blendFunction={BlendFunction.OVERLAY} />
+            <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={new THREE.Vector2(0.001, 0.001)} />
             <Vignette eskil={false} offset={0.1} darkness={1.1} />
             <SMAA />
           </EffectComposer>
