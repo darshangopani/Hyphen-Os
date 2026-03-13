@@ -1,18 +1,17 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, Icosahedron, Torus, Sphere, Trail, Html } from '@react-three/drei';
+import { Html, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { MotionValue } from 'motion/react';
 
 function HUDLabel({ title, subtitle, color, side = 'right' }: { title: string, subtitle: string, color: string, side?: 'left' | 'right' }) {
-  // Map colors to actual tailwind classes to avoid purge issues
   const colorMap: Record<string, { text: string, bg: string, border: string, shadow: string }> = {
-    'neon-blue': { text: 'text-neon-blue', bg: 'bg-neon-blue', border: 'border-neon-blue/50', shadow: 'shadow-[0_0_10px_rgba(0,243,255,0.3)]' },
-    'neon-purple': { text: 'text-neon-purple', bg: 'bg-neon-purple', border: 'border-neon-purple/50', shadow: 'shadow-[0_0_10px_rgba(188,19,254,0.3)]' },
+    'brand-primary': { text: 'text-brand-primary', bg: 'bg-brand-primary', border: 'border-brand-primary/50', shadow: 'shadow-[0_0_10px_rgba(249,115,22,0.3)]' },
+    'brand-secondary': { text: 'text-brand-secondary', bg: 'bg-brand-secondary', border: 'border-brand-secondary/50', shadow: 'shadow-[0_0_10px_rgba(244,63,94,0.3)]' },
     'red-500': { text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500/50', shadow: 'shadow-[0_0_10px_rgba(239,68,68,0.3)]' },
   };
 
-  const styles = colorMap[color] || colorMap['neon-blue'];
+  const styles = colorMap[color] || colorMap['brand-primary'];
 
   return (
     <Html center distanceFactor={15} zIndexRange={[100, 0]}>
@@ -22,7 +21,7 @@ function HUDLabel({ title, subtitle, color, side = 'right' }: { title: string, s
           <div className={`${styles.text} font-display font-bold text-[10px] tracking-widest whitespace-nowrap`}>
             {title}
           </div>
-          <div className="text-slate-400 font-mono text-[8px] tracking-wider whitespace-nowrap uppercase">
+          <div className="text-zinc-400 font-mono text-[8px] tracking-wider whitespace-nowrap uppercase">
             {subtitle}
           </div>
         </div>
@@ -31,151 +30,106 @@ function HUDLabel({ title, subtitle, color, side = 'right' }: { title: string, s
   );
 }
 
-function CyberGrid() {
-  const gridRef = useRef<THREE.GridHelper>(null);
-  useFrame((state) => {
-    if (!gridRef.current) return;
-    const time = state.clock.getElapsedTime();
-    gridRef.current.position.z = (time * 5) % 10;
-  });
+function NeonGalaxy({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const particlesRef = useRef<THREE.Points>(null);
 
-  return (
-    <group position={[0, -10, 0]}>
-      <gridHelper ref={gridRef} args={[200, 100, '#ff007f', '#00f3ff']} />
-      <gridHelper args={[200, 20, '#bc13fe', '#bc13fe']} position={[0, -0.1, 0]} />
-    </group>
-  );
-}
-
-function DataStreams() {
-  const count = 150; // Reduced from 300
-  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const count = 10000; // Optimized particle count for smoother performance
   
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const particles = useMemo(() => {
-    return Array.from({ length: count }, () => ({
-      position: new THREE.Vector3(
-        (Math.random() - 0.5) * 60,
-        (Math.random() - 0.5) * 60,
-        (Math.random() - 0.5) * 60 - 20
-      ),
-      speed: Math.random() * 0.5 + 0.1,
-      scale: Math.random() * 0.3 + 0.1,
-      rotationSpeed: new THREE.Vector3(Math.random() * 0.05, Math.random() * 0.05, Math.random() * 0.05)
-    }));
-  }, [count]);
+  const { positions, colors } = useMemo(() => {
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    
+    const colorInner = new THREE.Color('#ffffff'); // White hot core
+    const colorMid = new THREE.Color('#f97316');   // Vibrant Orange
+    const colorOuter = new THREE.Color('#f43f5e'); // Warm Rose
+    const colorEdge = new THREE.Color('#14b8a6');  // Teal Accent
 
-  useFrame(() => {
-    if (!meshRef.current) return;
-    particles.forEach((particle, i) => {
-      particle.position.z += particle.speed;
-      if (particle.position.z > 20) {
-        particle.position.z = -60;
+    for (let i = 0; i < count; i++) {
+      // Galaxy spiral math
+      const radius = Math.random() * 25;
+      const spinAngle = radius * 0.4; // Tightness of the spiral
+      const branchAngle = ((i % 4) * Math.PI * 2) / 4; // 4 spiral arms
+      
+      // Random scattering to make it look organic, tighter in the center
+      const scatter = Math.pow(Math.random(), 2) * (25 - radius) * 0.15;
+      const randomX = Math.cos(Math.random() * Math.PI * 2) * scatter;
+      const randomY = (Math.random() - 0.5) * (scatter * 0.5); // Flatter on Y axis
+      const randomZ = Math.sin(Math.random() * Math.PI * 2) * scatter;
+
+      positions[i * 3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+      positions[i * 3 + 1] = randomY;
+      positions[i * 3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+      // Color gradient based on distance from center
+      const mixedColor = new THREE.Color();
+      if (radius < 3) {
+        mixedColor.lerpColors(colorInner, colorMid, radius / 3);
+      } else if (radius < 12) {
+        mixedColor.lerpColors(colorMid, colorOuter, (radius - 3) / 9);
+      } else {
+        mixedColor.lerpColors(colorOuter, colorEdge, (radius - 12) / 13);
       }
-      dummy.position.copy(particle.position);
-      dummy.scale.setScalar(particle.scale);
-      dummy.rotation.x += particle.rotationSpeed.x;
-      dummy.rotation.y += particle.rotationSpeed.y;
-      dummy.rotation.z += particle.rotationSpeed.z;
-      dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
-    });
-    meshRef.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <boxGeometry args={[0.2, 0.2, 1.5]} />
-      <meshBasicMaterial color="#00f3ff" transparent opacity={0.4} wireframe />
-    </instancedMesh>
-  );
-}
-
-function AdvancedCore({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
-  const coreRef = useRef<THREE.Group>(null);
-  const ringsRef = useRef<THREE.Group>(null);
-  const trailsRef = useRef<THREE.Group>(null);
+      
+      // Add brightness variation
+      const brightness = Math.random() * 0.5 + 0.5;
+      colors[i * 3] = mixedColor.r * brightness;
+      colors[i * 3 + 1] = mixedColor.g * brightness;
+      colors[i * 3 + 2] = mixedColor.b * brightness;
+    }
+    return { positions, colors };
+  }, [count]);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     const scroll = scrollYProgress.get();
     
-    if (coreRef.current) {
-      coreRef.current.rotation.y = time * 0.2 + scroll * Math.PI;
-      coreRef.current.rotation.x = time * 0.1;
-      const scale = 1 + scroll * 0.5;
-      coreRef.current.scale.setScalar(scale);
-    }
-    
-    if (ringsRef.current) {
-      ringsRef.current.children.forEach((ring, i) => {
-        ring.rotation.x = time * (0.1 + i * 0.05) + scroll * 2;
-        ring.rotation.y = time * (0.2 + i * 0.02);
-      });
-    }
-
-    if (trailsRef.current) {
-      trailsRef.current.rotation.y = time * 0.5;
-      trailsRef.current.rotation.z = time * 0.3;
+    if (groupRef.current) {
+      // Smooth, majestic rotation
+      groupRef.current.rotation.y = time * 0.05 + scroll * Math.PI;
+      groupRef.current.rotation.x = Math.PI / 5 + scroll * 0.5; // Tilted to show the spiral
+      groupRef.current.rotation.z = time * 0.02;
     }
   });
 
   return (
-    <group position={[6, 0, -10]}>
-      <Float speed={2} floatIntensity={2} rotationIntensity={1}>
-        <group ref={coreRef}>
-          {/* Inner Energy Sphere */}
-          <Sphere args={[2, 16, 16]}>
-            <meshStandardMaterial color="#000000" emissive="#00f3ff" emissiveIntensity={2} wireframe />
-          </Sphere>
-          
-          {/* Core Shell */}
-          <Icosahedron args={[2.5, 1]}>
-            <meshPhysicalMaterial 
-              color="#0a0a0a" 
-              metalness={0.8} 
-              roughness={0.2} 
-              transmission={0.5} 
-              transparent 
-              opacity={0.8}
-              wireframe
-            />
-          </Icosahedron>
-          
-          {/* Data Rings */}
-          <group ref={ringsRef}>
-            <Torus args={[3.5, 0.02, 8, 64]}>
-              <meshStandardMaterial color="#ff007f" emissive="#ff007f" emissiveIntensity={2} />
-            </Torus>
-            <Torus args={[4.5, 0.02, 8, 64]} rotation={[Math.PI / 2, 0, 0]}>
-              <meshStandardMaterial color="#00f3ff" emissive="#00f3ff" emissiveIntensity={2} />
-            </Torus>
-            <Torus args={[5.5, 0.02, 8, 64]} rotation={[0, Math.PI / 2, 0]}>
-              <meshStandardMaterial color="#bc13fe" emissive="#bc13fe" emissiveIntensity={2} />
-            </Torus>
-          </group>
+    <group ref={groupRef} position={[5, -2, -20]}>
+      <points ref={particlesRef}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
+          <bufferAttribute attach="attributes-color" count={count} array={colors} itemSize={3} />
+        </bufferGeometry>
+        <pointsMaterial 
+          size={0.15} 
+          vertexColors 
+          transparent 
+          opacity={0.9} 
+          sizeAttenuation 
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </points>
 
-          <group position={[0, 7, 0]}>
-            <HUDLabel title="HYPHEN_NEXUS" subtitle="QUANTUM_ROUTING_ACTIVE" color="neon-blue" />
-          </group>
-          <group position={[-6, -4, 0]}>
-            <HUDLabel title="DATA_STREAM" subtitle="THROUGHPUT: 99.9%" color="neon-purple" side="left" />
-          </group>
-        </group>
+      {/* Core Supermassive Glow */}
+      <mesh>
+        <sphereGeometry args={[1.5, 32, 32]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.9} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[4, 32, 32]} />
+        <meshBasicMaterial color="#f97316" transparent opacity={0.3} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[8, 32, 32]} />
+        <meshBasicMaterial color="#f43f5e" transparent opacity={0.1} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
 
-        {/* Floating Data Nodes around the core */}
-        <group ref={trailsRef}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <group key={i} rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}>
-              <Trail width={1} color={i % 2 === 0 ? "#00f3ff" : "#ff007f"} length={4} decay={1} attenuation={(t) => t * t}>
-                <Sphere args={[0.1, 8, 8]} position={[7, 0, 0]}>
-                  <meshBasicMaterial color="#ffffff" />
-                </Sphere>
-              </Trail>
-            </group>
-          ))}
-        </group>
-      </Float>
+      <group position={[0, 10, 0]}>
+        <HUDLabel title="NEURAL_GALAXY" subtitle="10,000_DATA_POINTS" color="brand-primary" />
+      </group>
+      <group position={[-12, -4, 0]}>
+        <HUDLabel title="CORE_DENSITY" subtitle="CRITICAL_MASS" color="red-500" side="left" />
+      </group>
     </group>
   );
 }
@@ -185,18 +139,21 @@ export function CyberNetwork3D({ scrollYProgress }: { scrollYProgress: MotionVal
 
   useFrame((state, delta) => {
     if (groupRef.current) {
-      const targetX = (state.mouse.x * 2);
-      const targetY = (state.mouse.y * 2);
-      groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetX * 0.1, 4, delta);
-      groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, -targetY * 0.1, 4, delta);
+      // Subtle parallax effect based on mouse position
+      const targetX = (state.mouse.x * 0.5);
+      const targetY = (state.mouse.y * 0.5);
+      groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetX * 0.05, 2, delta);
+      groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, -targetY * 0.05, 2, delta);
     }
   });
 
   return (
     <group ref={groupRef}>
-      <CyberGrid />
-      <DataStreams />
-      <AdvancedCore scrollYProgress={scrollYProgress} />
+      <NeonGalaxy scrollYProgress={scrollYProgress} />
+      
+      {/* Deep Space Starfield */}
+      <Sparkles count={1000} scale={100} size={1} speed={0.1} opacity={0.4} color="#ffffff" />
+      <Sparkles count={500} scale={80} size={2} speed={0.2} opacity={0.3} color="#f97316" />
     </group>
   );
 }

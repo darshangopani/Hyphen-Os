@@ -11,7 +11,7 @@ export function TopNav() {
         <>
           <Link 
             to="/dashboard" 
-            className="flex items-center gap-2 px-4 py-2 bg-neon-blue/10 border border-neon-blue/50 text-neon-blue font-mono text-xs uppercase tracking-widest hover:bg-neon-blue hover:text-deep-space transition-colors duration-300 rounded-sm shadow-[0_0_10px_rgba(0,243,255,0.2)] hover:shadow-[0_0_20px_rgba(0,243,255,0.5)]"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-primary/10 border border-brand-primary/50 text-brand-primary font-mono text-xs uppercase tracking-widest hover:bg-brand-primary hover:text-brand-dark transition-colors duration-300 rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.2)] hover:shadow-[0_0_20px_rgba(249,115,22,0.5)]"
           >
             <LayoutDashboard size={14} /> Dashboard
           </Link>
@@ -26,13 +26,13 @@ export function TopNav() {
         <>
           <Link 
             to="/login" 
-            className="flex items-center gap-2 px-4 py-2 border border-neon-purple/50 text-neon-purple font-mono text-xs uppercase tracking-widest hover:bg-neon-purple/10 transition-colors duration-300 rounded-sm"
+            className="flex items-center gap-2 px-4 py-2 border border-brand-secondary/50 text-brand-secondary font-mono text-xs uppercase tracking-widest hover:bg-brand-secondary/10 transition-colors duration-300 rounded-sm"
           >
             <LogIn size={14} /> Log In
           </Link>
           <Link 
             to="/signup" 
-            className="flex items-center gap-2 px-4 py-2 bg-neon-blue/10 border border-neon-blue/50 text-neon-blue font-mono text-xs uppercase tracking-widest hover:bg-neon-blue hover:text-deep-space transition-colors duration-300 rounded-sm shadow-[0_0_10px_rgba(0,243,255,0.2)] hover:shadow-[0_0_20px_rgba(0,243,255,0.5)]"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-primary/10 border border-brand-primary/50 text-brand-primary font-mono text-xs uppercase tracking-widest hover:bg-brand-primary hover:text-brand-dark transition-colors duration-300 rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.2)] hover:shadow-[0_0_20px_rgba(249,115,22,0.5)]"
           >
             <UserPlus size={14} /> Sign Up
           </Link>

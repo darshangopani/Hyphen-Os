@@ -1,9 +1,7 @@
 import { useScroll, useSpring } from 'motion/react';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Stars } from '@react-three/drei';
-import { EffectComposer, Bloom, ChromaticAberration, Vignette, Noise, SMAA } from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
-import * as THREE from 'three';
+import { EffectComposer, Bloom, Vignette, SMAA } from '@react-three/postprocessing';
 import { Routes, Route } from 'react-router-dom';
 import { CyberNetwork3D } from './components/CyberNetwork3D';
 import { TechOverlay } from './components/TechOverlay';
@@ -13,6 +11,7 @@ import { TopNav } from './components/TopNav';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { SignUp } from './pages/SignUp';
+import { Dashboard } from './pages/Dashboard';
 
 export default function App() {
   const { scrollYProgress } = useScroll();
@@ -20,7 +19,7 @@ export default function App() {
   const smoothScroll = useSpring(scrollYProgress, { damping: 20, stiffness: 100, mass: 0.2 });
 
   return (
-    <div className="relative bg-deep-space text-slate-200 selection:bg-neon-blue/30 selection:text-neon-blue overflow-x-hidden">
+    <div className="relative bg-brand-dark text-zinc-200 selection:bg-brand-primary/30 selection:text-brand-primary overflow-x-hidden">
       <Logo />
       <TopNav />
       <TechOverlay />
@@ -33,12 +32,12 @@ export default function App() {
           dpr={[1, 2]} // High DPI support
           gl={{ antialias: false, powerPreference: "high-performance" }} // Disable default AA to use SMAA
         >
-          <color attach="background" args={['#010005']} />
-          <fog attach="fog" args={['#010005', 10, 50]} />
+          <color attach="background" args={['#09090b']} />
+          <fog attach="fog" args={['#09090b', 10, 50]} />
           
           <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 20, 10]} intensity={1.5} color="#ff007f" />
-          <directionalLight position={[-10, -20, -10]} intensity={1.5} color="#00f3ff" />
+          <directionalLight position={[10, 20, 10]} intensity={1.5} color="#f43f5e" />
+          <directionalLight position={[-10, -20, -10]} intensity={1.5} color="#f97316" />
           <pointLight position={[0, 0, 5]} intensity={1} color="#ffffff" />
           
           <Stars radius={100} depth={50} count={1500} factor={4} saturation={0} fade speed={1} />
@@ -49,8 +48,6 @@ export default function App() {
           
           <EffectComposer multisampling={0}>
             <Bloom luminanceThreshold={0.4} luminanceSmoothing={0.9} height={300} intensity={1.5} />
-            <Noise opacity={0.02} blendFunction={BlendFunction.OVERLAY} />
-            <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={new THREE.Vector2(0.001, 0.001)} />
             <Vignette eskil={false} offset={0.1} darkness={1.1} />
             <SMAA />
           </EffectComposer>
@@ -61,6 +58,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </div>
   );

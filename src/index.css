@@ -4,10 +4,10 @@
 @theme {
   --font-sans: "Space Mono", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Michroma", ui-sans-serif, system-ui, sans-serif;
-  --color-neon-blue: #00f3ff;
-  --color-neon-purple: #bc13fe;
-  --color-deep-space: #030014;
-  --color-terminal-green: #00ff41;
+  --color-brand-primary: #f97316; /* Vibrant Orange */
+  --color-brand-secondary: #f43f5e; /* Warm Rose */
+  --color-brand-dark: #09090b; /* Deep Zinc */
+  --color-brand-accent: #10b981; /* Clean Emerald */
   --animate-spin-slow: spin 8s linear infinite;
   --animate-scan: scan 4s ease-in-out infinite;
   --animate-shimmer: shimmer 1.5s infinite;
@@ -25,7 +25,7 @@
 }
 
 body {
-  background-color: var(--color-deep-space);
+  background-color: var(--color-brand-dark);
   color: #e2e8f0;
   overflow-x: hidden;
 }
